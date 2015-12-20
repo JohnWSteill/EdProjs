@@ -7,6 +7,20 @@ class UCSD_Ros_Solver(object):
     r.myProb("MyData.txt")
     Assumes that MyData.txt is in working directory or getwd()/Data 
     """      
+    def ReconFromOverlapGraphWalk(self,inpFile,echoToScreen=False):
+        fileparts = inpFile.split('.')
+        outFileName = ".".join(fileparts[0:-1]) + "_out." + fileparts[-1]
+        with open(inpFile) as f:
+            dna = [el.strip() for el in f.readlines()]
+        reconStr = dna[0][0:-1]
+        for d in dna:
+            reconStr += d[-1]
+        with open(outFileName,"w") as f:
+            f.write(reconStr + "\n")     
+
+
+
+
 
     def StringRecon(self,inpFile,echoToScreen=False):
         """ Solve the String Composition Problem.
@@ -25,7 +39,8 @@ class UCSD_Ros_Solver(object):
         TCCAA
         CCAAC
         """
-        outFileName = inpFile + "_out"
+        fileparts = inpFile.split('.')
+        outFileName = ".".join(fileparts[0:-1]) + "_out." + fileparts[-1]
         with open(inpFile) as f:
             k = int(f.readline().strip())
             dna = f.readline().strip()

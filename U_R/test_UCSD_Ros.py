@@ -8,7 +8,7 @@ import UCSD_Ros
 reload(UCSD_Ros)
 
 def makeTmpFile(data,fName):
-	with open(fName,"w") as f:
+    with open(fName,"w") as f:
 		for d in data:
 			f.write(d)
 	# with open(fName) as f:
