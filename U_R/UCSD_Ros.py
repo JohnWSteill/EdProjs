@@ -1,3 +1,20 @@
+def writeToOutfile(fun):
+    def wrapper(*args,**kwargs):
+        ans = fun(*args,**kwargs)
+        fileparts = args[1].split('.')
+        outFileName = ".".join(fileparts[0:-1]) + "_out." + fileparts[-1]        
+        with open(outFileName,'w') as f:
+            for a in ans: 
+                f.write(a)
+    return wrapper
+
+def readInpFileDna(fun):
+    def wrapper(*args,**kwargs):
+        with open(args[1]) as f:
+            dna = [el.strip() for el in f.readlines()]
+        ans = fun(*args,dna = dna)
+    return wrapper
+
 # http://docs.sublimetext.info/en/latest/basic_concepts.html
 class UCSD_Ros_Solver(object): 
     """ This class performs Rosalind Project solutions. 
@@ -6,35 +23,26 @@ class UCSD_Ros_Solver(object):
     r = UCSD_Ros_Solver() 
     r.myProb("MyData.txt")
     Assumes that MyData.txt is in working directory or getwd()/Data 
-    """      
+    """
 
-    def getOverlap(self,inpFile,echoToScreen=False):
-        fileparts = inpFile.split('.')
-        outFileName = ".".join(fileparts[0:-1]) + "_out." + fileparts[-1]
-        with open(inpFile) as f:
-            dna = [el.strip() for el in f.readlines()]
-        
+    @readInpFileDna
+    @writeToOutfile
+    def getOverlap(self,inpFile,dna=None,echoToScreen=False):
         adjGra = []
         for d1 in dna:
             for d2 in dna:
                 if d1[1:] == d2[:-1]:
                     adjGra.append(d1 + ' -> ' + d2 + '\n')
-
-        with open(outFileName,'w') as f:
-            for a in adjGra: 
-                f.write(a)
-
-
-    def ReconFromOverlapGraphWalk(self,inpFile,echoToScreen=False):
-        fileparts = inpFile.split('.')
-        outFileName = ".".join(fileparts[0:-1]) + "_out." + fileparts[-1]
-        with open(inpFile) as f:
-            dna = [el.strip() for el in f.readlines()]
+        return adjGra
+    
+    @readInpFileDna
+    @writeToOutfile
+    def ReconFromOverlapGraphWalk(self,inpFile,dna=None, echoToScreen=False):
         reconStr = dna[0][0:-1]
         for d in dna:
             reconStr += d[-1]
-        with open(outFileName,"w") as f:
-            f.write(reconStr + "\n")     
+        return reconstr
+            
 
     def StringRecon(self,inpFile,echoToScreen=False):
         """ Solve the String Composition Problem.
