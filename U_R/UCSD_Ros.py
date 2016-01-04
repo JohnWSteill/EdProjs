@@ -16,6 +16,17 @@ def readInpFileKDna(fun):
         ans = fun(*args,dna = dna, k = k)
     return wrapper
 
+def readInpFileDirGraph(fun):
+    def wrapper(*args,**kwargs):
+        g = {}
+        with open(args[1]) as f:
+            for line in f.readlines():
+                (k,vs) = line.split('->')
+                for v in vs.strip().split(','):
+                    addKeyAndValTodeBrujin(g,k.strip(),v)
+        ans = fun(*args,g=g)
+    return wrapper
+
 def readInpFileDna(fun):
     def wrapper(*args,**kwargs):
         with open(args[1]) as f:
@@ -31,7 +42,7 @@ def addKeyAndValTodeBrujin(dB,k,v):
 
 def outputDeBrujin(dB):
     ans = []
-    for k in dB:
+    for k in sorted(dB):
         ans.append(k + ' -> ' + ','.join(dB[k])+'\n')
     return ans
     
@@ -45,6 +56,58 @@ class UCSD_Ros_Solver(object):
     r.myProb("MyData.txt")
     Assumes that MyData.txt is in working directory or getwd()/Data 
     """
+
+    @readInpFileDirGraph
+    @writeToOutfile
+    def getEulerCycle(self, inpFile, g = None):
+
+        head = min(g.keys())
+        tail = g[head][0]
+        if len(g[head])>1:
+            g[head] = g[head][1:]
+        else:
+            g.pop(head)
+        cycle = [(head,tail)]
+        while g != {}:
+            tails = [el[1] for el in cycle]
+            for k in g.keys():
+                if k in tails:
+                    newStart = k
+                    break;
+                
+            indNS = tails.index(newStart)
+            cycle = cycle[indNS+1:] + cycle[:indNS+1] 
+            
+            while True:
+                pT = cycle[-1][1]
+                try:
+                    tail = g[pT][0]
+                except:
+                    break
+                if len(g[pT]) > 1:
+                    g[pT] = g[pT][1:]
+                else:
+                    g.pop(pT)
+                cycle.append([pT,tail])
+                
+        
+        c = [cycle[0][0]]
+        for el in cycle:
+            c.append(el[1])
+        return '->'.join(c)
+        
+        
+        
+        
+
+    @readInpFileKDna
+    @writeToOutfile
+    def getDeBrujinK(self,inpFile,k=None,dna=None):
+        kmers = [dna[i:i+k] for i in range(len(dna)-k+1)]
+        deBrujin = {}
+        for d in kmers:
+            addKeyAndValTodeBrujin(deBrujin, d[:-1],d[1:])
+        return outputDeBrujin(deBrujin)
 
     @readInpFileDna
     @writeToOutfile
@@ -62,8 +125,6 @@ class UCSD_Ros_Solver(object):
             addKeyAndValTodeBrujin(deBrujin, dna[i:i+k-1],dna[i+1:i+k])
         return outputDeBrujin(deBrujin)
         
-        
-            
 
     @readInpFileDna
     @writeToOutfile

@@ -1,5 +1,1 @@
-GAG -> AGG
-AGG -> GGG
-GGG -> GGG,GGA
-CAG -> AGG,AGG
-GGA -> GAG
+6->5->4->2->1->0->3->2->6->8->7->9->6
