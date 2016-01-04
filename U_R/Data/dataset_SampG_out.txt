@@ -1,4 +1,1 @@
-GCATG -> CATGC
-CATGC -> ATGCG
-AGGCA -> GGCAT
-GGCAT -> GCATG
+6->5->4->2->1->0->3->2->6->8->7->9->6
