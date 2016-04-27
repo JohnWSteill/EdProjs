@@ -10,5 +10,6 @@ setup(
     author_email='flyingcircus@example.com', 
     license='MIT', 
     packages=['funniest'], 
+    install_requires=['markdown'],
     zip_safe=False)
 
